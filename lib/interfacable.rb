@@ -7,6 +7,10 @@ module Interfacable
   class NotImplemented < Exception; end
   # rubocop:enable Lint/InheritException
 
+  def self.extended(base)
+    base.extend ClassMethods
+  end
+
   def self.included(base)
     base.extend ClassMethods
   end

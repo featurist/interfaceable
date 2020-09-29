@@ -16,7 +16,7 @@ RSpec.describe Interfacable do
   it 'raises if class does not implement a method' do
     expect do
       class Good
-        include Interfacable
+        extend Interfacable
 
         implements Fooable
 
