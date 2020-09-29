@@ -35,15 +35,22 @@ RSpec.describe Interfacable do
 
   it 'can implement multiples interfaces' do
     expect do
-      class Good
+      class Bad
         include Interfacable
 
         implements Fooable, Barable
-
-        def foo; end
-
-        def bar; end
       end
-    end.to_not raise_error
+    end.to raise_error(Interfacable::NotImplemented, /Bad must implement Fooable#foo, Barable#bar/)
+  end
+
+  it 'can call .implements multiple times' do
+    expect do
+      class Bad
+        include Interfacable
+
+        implements Fooable
+        implements Barable
+      end
+    end.to raise_error(Interfacable::NotImplemented, /Bad must implement Fooable#foo, Barable#bar/)
   end
 end

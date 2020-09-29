@@ -15,10 +15,12 @@ module Interfacable
   module ClassMethods
     # rubocop:disable Metrics/MethodLength
     def implements(*interfaces)
-      TracePoint.trace(:end) do |t|
-        # This is covered, but simplecov does not see it.
+      @interfaces ||= []
+      @interfaces.push(*interfaces)
+
+      @interfacable_trace ||= TracePoint.trace(:end) do |t|
         if self == t.self
-          errors = interfaces.each_with_object({}) do |interface, acc|
+          errors = @interfaces.each_with_object({}) do |interface, acc|
             missing_implementations = interface.instance_methods.reject do |meth|
               instance_methods.include?(meth)
             end
