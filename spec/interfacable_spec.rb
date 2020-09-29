@@ -14,6 +14,12 @@ RSpec.describe Interfacable do
     def foo; end
   end
 
+  module Doable
+    def self.do; end
+
+    def stuff; end
+  end
+
   it 'raises if class does not implement a method' do
     expect do
       class Good
@@ -36,23 +42,32 @@ RSpec.describe Interfacable do
 
   it 'can implement multiples interfaces' do
     expect do
-      class Bad
+      class Bad2
         include Interfacable
 
         implements Fooable, Barable
       end
-    end.to raise_error(Interfacable::NotImplemented, /Bad must implement Fooable#foo, Barable#bar/)
+    end.to raise_error(Interfacable::NotImplemented, /Bad2 must implement Fooable#foo, Barable#bar/)
   end
 
   it 'can call .implements multiple times' do
     expect do
-      class Bad
+      class Bad3
         include Interfacable
 
         implements Fooable
         implements Barable
       end
-    end.to raise_error(Interfacable::NotImplemented, /Bad must implement Fooable#foo, Barable#bar/)
+    end.to raise_error(Interfacable::NotImplemented, /Bad3 must implement Fooable#foo, Barable#bar/)
+  end
+
+  it 'checks class methods too' do
+    expect do
+      class Bad5
+        include Interfacable
+        implements Doable, Barable
+      end
+    end.to raise_error(Interfacable::NotImplemented, /Bad5 must implement Doable\.do, Doable#stuff, Barable#bar/)
   end
 end
 # rubocop:enable Metrics/BlockLength

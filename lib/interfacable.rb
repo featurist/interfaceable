@@ -40,22 +40,45 @@ module Interfacable
     end
 
     def perform(interfaces)
-      errors = interfaces.each_with_object({}) do |interface, acc|
-        missing_implementations = interface.instance_methods.reject do |meth|
-          @klass.instance_methods.include?(meth)
-        end
-
-        acc[interface] = missing_implementations if missing_implementations.any?
-      end
+      errors = collect_errors(interfaces)
 
       return if errors.empty?
 
       raise(NotImplemented, "#{@klass.name} must implement #{formatted_error(errors)}")
     end
 
+    private
+
+    def collect_errors(interfaces)
+      interfaces.each_with_object({}) do |interface, acc|
+        missing_class_methods = get_missing_class_methods(interface)
+        missing_instance_methods = get_missing_instance_methods(interface)
+
+        next if missing_instance_methods.none? && missing_class_methods.none?
+
+        acc[interface] = {
+          missing_instance_methods: missing_instance_methods,
+          missing_class_methods: missing_class_methods
+        }
+      end
+    end
+
+    def get_missing_class_methods(interface)
+      interface.methods.reject do |meth|
+        @klass.methods.include?(meth)
+      end
+    end
+
+    def get_missing_instance_methods(interface)
+      interface.instance_methods.reject do |meth|
+        @klass.instance_methods.include?(meth)
+      end
+    end
+
     def formatted_error(errors)
       errors.map do |interface, methods|
-        methods.map { |meth| "#{interface.name}##{meth}" }
+        methods[:missing_class_methods].map { |meth| "#{interface.name}.#{meth}" } +
+          methods[:missing_instance_methods].map { |meth| "#{interface.name}##{meth}" }
       end.join(', ')
     end
   end
