@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/BlockLength
 RSpec.describe Interfacable do
   it 'has a version number' do
     expect(Interfacable::VERSION).not_to be nil
@@ -54,3 +55,4 @@ RSpec.describe Interfacable do
     end.to raise_error(Interfacable::NotImplemented, /Bad must implement Fooable#foo, Barable#bar/)
   end
 end
+# rubocop:enable Metrics/BlockLength
