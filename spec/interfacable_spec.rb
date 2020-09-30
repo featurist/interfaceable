@@ -20,6 +20,10 @@ RSpec.describe Interfacable do
     def stuff; end
   end
 
+  module Stuffable
+    def stuff(thing, aaa:, bbb: 2, &block); end
+  end
+
   it 'raises if class does not implement a method' do
     expect do
       class Good
@@ -68,6 +72,20 @@ RSpec.describe Interfacable do
         implements Doable, Barable
       end
     end.to raise_error(Interfacable::NotImplemented, /Bad5 must implement Doable\.do, Doable#stuff, Barable#bar/)
+  end
+
+  it 'checks intance method signatures' do
+    expect do
+      class Bad6
+        include Interfacable
+        implements Stuffable, Barable
+
+        def stuff(thing); end
+      end
+    end.to raise_error(
+      Interfacable::NotImplemented,
+      /Bad6 must implement Barable#bar and match Stuffable#stuff signature/
+    )
   end
 end
 # rubocop:enable Metrics/BlockLength
