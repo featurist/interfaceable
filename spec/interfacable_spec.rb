@@ -24,6 +24,10 @@ RSpec.describe Interfacable do
     def stuff(thing, aaa:, bbb: 2, &block); end
   end
 
+  module Staticable
+    def self.static(aaa:, &block); end
+  end
+
   it 'raises if class does not implement a method' do
     expect do
       class Good
@@ -74,7 +78,7 @@ RSpec.describe Interfacable do
     end.to raise_error(Interfacable::NotImplemented, /Bad5 must implement Doable\.do, Doable#stuff, Barable#bar/)
   end
 
-  it 'checks intance method signatures' do
+  it 'checks instance method signatures' do
     expect do
       class Bad6
         include Interfacable
@@ -85,6 +89,20 @@ RSpec.describe Interfacable do
     end.to raise_error(
       Interfacable::NotImplemented,
       /Bad6 must implement Barable#bar and match Stuffable#stuff signature/
+    )
+  end
+
+  it 'checks static method signatures' do
+    expect do
+      class Bad7
+        include Interfacable
+        implements Staticable
+
+        def self.static(thing, aaa:, bbb: 3); end
+      end
+    end.to raise_error(
+      Interfacable::NotImplemented,
+      /Bad7 must match Staticable\.static signature/
     )
   end
 end

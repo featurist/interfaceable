@@ -46,12 +46,12 @@ module Interfacable
 
       error_parts = []
 
-      if (missing_implementation_errors = formatted_missing_implementations_error(errors))
-        error_parts << "implement #{missing_implementation_errors}"
+      if (missing_implementation_errors = formatted_missing_implementations_errors(errors)).any?
+        error_parts << "implement #{missing_implementation_errors.join(', ')}"
       end
 
-      if (signature_errors = formatted_signature_error(errors))
-        error_parts << "match #{signature_errors} signature"
+      if (signature_errors = formatted_signature_errors(errors)).any?
+        error_parts << "match #{signature_errors.join(', ')} signature"
       end
 
       raise(NotImplemented, "#{@klass} must #{error_parts.join(' and ')}")
@@ -63,14 +63,16 @@ module Interfacable
       interfaces.each_with_object({}) do |interface, acc|
         missing_class_methods = find_missing_class_methods(interface)
         missing_instance_methods = find_missing_instance_methods(interface)
-        wrong_signatures = find_wrong_signatures(interface, interface.instance_methods - missing_instance_methods)
+        wrong_instance_method_signatures = find_wrong_signatures(interface, :instance_method, interface.instance_methods - missing_instance_methods)
+        wrong_static_method_signatures = find_wrong_signatures(interface, :method, own_methods(interface.methods) - missing_class_methods)
 
-        next if missing_instance_methods.none? && missing_class_methods.none? && wrong_signatures.none?
+        next if missing_instance_methods.none? && missing_class_methods.none? && wrong_instance_method_signatures.none? && wrong_static_method_signatures.none?
 
         acc[interface] = {
           missing_instance_methods: missing_instance_methods,
           missing_class_methods: missing_class_methods,
-          wrong_signatures: wrong_signatures
+          wrong_instance_method_signatures: wrong_instance_method_signatures,
+          wrong_static_method_signatures: wrong_static_method_signatures
         }
       end
     end
@@ -87,26 +89,27 @@ module Interfacable
       end
     end
 
-    def find_wrong_signatures(interface, implemented_methods)
+    def find_wrong_signatures(interface, method_type, implemented_methods)
       implemented_methods.reject do |meth|
-        expected_parameters = interface.instance_method(meth).parameters
-        actual_parameters = @klass.instance_method(meth).parameters
+        expected_parameters = interface.send(method_type, meth).parameters
+        actual_parameters = @klass.send(method_type, meth).parameters
 
         method_signatures_match?(expected_parameters, actual_parameters)
       end
     end
 
-    def formatted_missing_implementations_error(errors)
+    def formatted_missing_implementations_errors(errors)
       errors.map do |interface, methods|
         methods[:missing_class_methods].map { |meth| "#{interface.name}.#{meth}" } +
           methods[:missing_instance_methods].map { |meth| "#{interface.name}##{meth}" }
-      end.flatten.join(', ')
+      end.flatten
     end
 
-    def formatted_signature_error(errors)
+    def formatted_signature_errors(errors)
       errors.map do |interface, methods|
-        methods[:wrong_signatures].map { |meth| "#{interface.name}##{meth}" }
-      end.flatten.join(', ')
+        methods[:wrong_static_method_signatures].map { |meth| "#{interface.name}.#{meth}" } +
+          methods[:wrong_instance_method_signatures].map { |meth| "#{interface.name}##{meth}" }
+      end.flatten
     end
 
     def own_methods(methods)
