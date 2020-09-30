@@ -46,12 +46,12 @@ module Interfacable
 
       error_parts = []
 
-      if (missing_implementation_errors = formatted_missing_implementations_errors(errors)).any?
-        error_parts << "implement #{missing_implementation_errors.join(', ')}"
+      if (missing_method_errors = formatted_missing_methods_errors(errors)).any?
+        error_parts << "implement #{missing_method_errors.join(', ')}"
       end
 
       if (signature_errors = formatted_signature_errors(errors)).any?
-        error_parts << "match #{signature_errors.join(', ')} signature"
+        error_parts << "match #{signature_errors.join(', ')} signature#{signature_errors.empty? ? '' : 's'}"
       end
 
       raise(NotImplemented, "#{@klass} must #{error_parts.join(' and ')}")
@@ -98,7 +98,7 @@ module Interfacable
       end
     end
 
-    def formatted_missing_implementations_errors(errors)
+    def formatted_missing_methods_errors(errors)
       errors.map do |interface, methods|
         methods[:missing_class_methods].map { |meth| "#{interface.name}.#{meth}" } +
           methods[:missing_instance_methods].map { |meth| "#{interface.name}##{meth}" }

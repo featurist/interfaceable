@@ -26,6 +26,8 @@ RSpec.describe Interfacable do
 
   module Staticable
     def self.static(aaa:, &block); end
+
+    def some_method(foo); end
   end
 
   it 'raises if class does not implement a method' do
@@ -99,10 +101,12 @@ RSpec.describe Interfacable do
         implements Staticable
 
         def self.static(thing, aaa:, bbb: 3); end
+
+        def some_method; end
       end
     end.to raise_error(
       Interfacable::NotImplemented,
-      /Bad7 must match Staticable\.static signature/
+      /Bad7 must match Staticable\.static, Staticable#some_method signatures/
     )
   end
 end
