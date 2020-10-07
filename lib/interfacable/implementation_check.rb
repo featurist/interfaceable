@@ -8,26 +8,40 @@ module Interfacable
     end
 
     def perform(interfaces)
-      interfaces.each_with_object({}) do |interface, acc|
-        missing_class_methods = find_missing_class_methods(interface)
-        missing_instance_methods = find_missing_instance_methods(interface)
-        wrong_instance_method_signatures = find_wrong_signatures(interface, :instance_method, interface.instance_methods - missing_instance_methods)
-        wrong_static_method_signatures = find_wrong_signatures(interface, :method, own_methods(interface.methods) - missing_class_methods)
+      results = validate(interfaces)
 
-        if missing_instance_methods.none? && missing_class_methods.none? && wrong_instance_method_signatures.none? && wrong_static_method_signatures.none?
-          next
-        end
-
-        acc[interface] = {
-          missing_instance_methods: missing_instance_methods,
-          missing_class_methods: missing_class_methods,
-          wrong_instance_method_signatures: wrong_instance_method_signatures,
-          wrong_static_method_signatures: wrong_static_method_signatures
-        }
+      results.reject do |_, checks|
+        checks.values.all?(&:empty?)
       end
     end
 
     private
+
+    # rubocop:disable Metrics/MethodLength
+    def validate(interfaces)
+      interfaces.each_with_object({}) do |interface, acc|
+        missing_class_methods = find_missing_class_methods(interface)
+        missing_instance_methods = find_missing_instance_methods(interface)
+        instance_method_signature_errors = find_signature_errors(
+          interface,
+          :instance_method,
+          interface.instance_methods - missing_instance_methods
+        )
+        class_method_signature_errors = find_signature_errors(
+          interface,
+          :method,
+          own_methods(interface.methods) - missing_class_methods
+        )
+
+        acc[interface] = {
+          missing_instance_methods: missing_instance_methods,
+          missing_class_methods: missing_class_methods,
+          instance_method_signature_errors: instance_method_signature_errors,
+          class_method_signature_errors: class_method_signature_errors
+        }
+      end
+    end
+    # rubocop:enable Metrics/MethodLength
 
     def find_missing_class_methods(interface)
       own_methods(interface.methods).reject do |meth|
@@ -41,12 +55,17 @@ module Interfacable
       end
     end
 
-    def find_wrong_signatures(interface, method_type, implemented_methods)
-      implemented_methods.reject do |meth|
+    def find_signature_errors(interface, method_type, implemented_methods)
+      implemented_methods.each_with_object({}) do |meth, acc|
         expected_parameters = interface.send(method_type, meth).parameters
         actual_parameters = @klass.send(method_type, meth).parameters
 
-        method_signatures_match?(expected_parameters, actual_parameters)
+        next unless (errors = check_method_signature(expected_parameters, actual_parameters))
+
+        acc[meth] = {
+          expected: errors[:expected_positional_parameters] + errors[:expected_keyword_parameters],
+          actual: errors[:actual_positional_parameters] + errors[:actual_keyword_parameters]
+        }
       end
     end
 
@@ -54,17 +73,30 @@ module Interfacable
       methods - Object.methods
     end
 
-    def method_signatures_match?(expected_parameters, actual_parameters)
-      expected_keyword_parameters, expected_positional_parameters = split_parameters_by_type(expected_parameters)
-      actual_keyword_parameters, actual_positional_parameters = split_parameters_by_type(actual_parameters)
+    def check_method_signature(expected_parameters, actual_parameters)
+      expected_keyword_parameters, expected_positional_parameters = simplify_parameters(
+        *split_parameters_by_type(expected_parameters)
+      )
+      actual_keyword_parameters, actual_positional_parameters = simplify_parameters(
+        *split_parameters_by_type(actual_parameters)
+      )
 
-      positional_arguments_match =
-        expected_positional_parameters.map(&:first) == actual_positional_parameters.map(&:first)
+      return if expected_positional_parameters == actual_positional_parameters &&
+                expected_keyword_parameters == actual_keyword_parameters
 
-      keyword_arguments_match =
-        expected_keyword_parameters.map(&:last).sort == actual_keyword_parameters.map(&:last).sort
+      {
+        expected_positional_parameters: expected_positional_parameters,
+        expected_keyword_parameters: expected_keyword_parameters,
+        actual_positional_parameters: actual_positional_parameters,
+        actual_keyword_parameters: actual_keyword_parameters
+      }
+    end
 
-      positional_arguments_match && keyword_arguments_match
+    def simplify_parameters(keyword_parameters, positional_parameters)
+      [
+        keyword_parameters.map(&:last).sort,
+        positional_parameters.map(&:first).reject { |p| p == :block }.map(&:to_s)
+      ]
     end
 
     def split_parameters_by_type(parameters)

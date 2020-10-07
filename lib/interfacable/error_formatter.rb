@@ -32,8 +32,8 @@ module Interfacable
 
     def formatted_signature_errors(errors)
       errors.map do |interface, methods|
-        methods[:wrong_static_method_signatures].map { |meth| "#{interface.name}.#{meth}" } +
-          methods[:wrong_instance_method_signatures].map { |meth| "#{interface.name}##{meth}" }
+        methods[:class_method_signature_errors].map { |meth| "#{interface.name}.#{meth}" } +
+          methods[:instance_method_signature_errors].map { |meth| "#{interface.name}##{meth}" }
       end.flatten
     end
   end

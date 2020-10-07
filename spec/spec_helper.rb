@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'bundler/setup'
+require 'awesome_print'
 require 'interfacable'
 
 RSpec.configure do |config|
