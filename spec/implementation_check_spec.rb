@@ -2,6 +2,7 @@
 
 require_relative '../lib/interfacable/implementation_check'
 
+# rubocop:disable Metrics/BlockLength
 RSpec.describe Interfacable::ImplementationCheck do
   it 'checks instance methods' do
     interface = Module.new do
@@ -10,7 +11,14 @@ RSpec.describe Interfacable::ImplementationCheck do
     klass = Class.new
     errors = Interfacable::ImplementationCheck.new(klass).perform([interface])
 
-    expect(errors[interface][:missing_instance_methods]).to eq [:foo]
+    expect(errors[interface]).to eq(
+      {
+        missing_instance_methods: [:foo],
+        missing_class_methods: [],
+        instance_method_signature_errors: {},
+        class_method_signature_errors: {}
+      }
+    )
   end
 
   it 'checks class methods' do
@@ -76,3 +84,4 @@ RSpec.describe Interfacable::ImplementationCheck do
     expect(errors).to eq({})
   end
 end
+# rubocop:enable Metrics/BlockLength

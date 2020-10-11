@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+if ENV.fetch('COVERAGE', false)
+  require 'simplecov'
+  SimpleCov.start do
+    add_filter '/spec/'
+  end
+end
 require 'bundler/setup'
 require 'awesome_print'
 require 'interfacable'

@@ -7,7 +7,7 @@ require_relative 'interfacable/error_formatter'
 module Interfacable
   # Subclassing exceptions because other errors don't raise from within `TracePoint.trace`.
   # rubocop:disable Lint/InheritException
-  class NotImplemented < Exception; end
+  class Error < Exception; end
   # rubocop:enable Lint/InheritException
 
   def self.extended(base)
@@ -21,22 +21,22 @@ module Interfacable
   # class methods
   module ClassMethods
     def implements(*interfaces)
-      @interfaces ||= []
-      @interfaces.push(*interfaces)
+      (@interfaces ||= []).push(*interfaces)
 
       # rubocop:disable Naming/MemoizedInstanceVariableName
       @interfacable_trace ||= TracePoint.trace(:end) do |t|
+        # simplecov does not see inside this block
+        # :nocov:
         # rubocop:enable Naming/MemoizedInstanceVariableName
         if self == t.self
-          errors = ImplementationCheck.new(self).perform(@interfaces)
-
-          unless errors.empty?
+          unless (errors = ImplementationCheck.new(self).perform(@interfaces)).empty?
             error_message = ErrorFormatter.new(self).format_errors(errors)
-            raise(NotImplemented, error_message)
+            raise(Error, error_message)
           end
 
           t.disable
         end
+        # :nocov:
       end
     end
   end

@@ -14,22 +14,6 @@ RSpec.describe Interfacable do
     def foo; end
   end
 
-  module Doable
-    def self.do; end
-
-    def stuff; end
-  end
-
-  module Stuffable
-    def stuff(thing, aaa:, bbb: 2, &block); end
-  end
-
-  module Staticable
-    def self.static(aaa:, &block); end
-
-    def some_method(foo); end
-  end
-
   it 'raises if class does not implement a method' do
     expect do
       class Good
@@ -47,7 +31,7 @@ RSpec.describe Interfacable do
 
         implements Fooable
       end
-    end.to raise_error(Interfacable::NotImplemented, /Bad must implement Fooable#foo/)
+    end.to raise_error(Interfacable::Error, /Bad must implement.*Fooable#foo/m)
   end
 
   it 'can implement multiples interfaces' do
@@ -57,7 +41,7 @@ RSpec.describe Interfacable do
 
         implements Fooable, Barable
       end
-    end.to raise_error(Interfacable::NotImplemented, /Bad2 must implement Fooable#foo, Barable#bar/)
+    end.to raise_error(Interfacable::Error, /Bad2 must implement.*Fooable#foo.*Barable#bar/m)
   end
 
   it 'can call .implements multiple times' do
@@ -68,46 +52,7 @@ RSpec.describe Interfacable do
         implements Fooable
         implements Barable
       end
-    end.to raise_error(Interfacable::NotImplemented, /Bad3 must implement Fooable#foo, Barable#bar/)
-  end
-
-  it 'checks class methods too' do
-    expect do
-      class Bad5
-        include Interfacable
-        implements Doable, Barable
-      end
-    end.to raise_error(Interfacable::NotImplemented, /Bad5 must implement Doable\.do, Doable#stuff, Barable#bar/)
-  end
-
-  it 'checks instance method signatures' do
-    expect do
-      class Bad6
-        include Interfacable
-        implements Stuffable, Barable
-
-        def stuff(thing); end
-      end
-    end.to raise_error(
-      Interfacable::NotImplemented,
-      /Bad6 must implement Barable#bar and match Stuffable#stuff signature/
-    )
-  end
-
-  it 'checks static method signatures' do
-    expect do
-      class Bad7
-        include Interfacable
-        implements Staticable
-
-        def self.static(thing, aaa:, bbb: 3); end
-
-        def some_method; end
-      end
-    end.to raise_error(
-      Interfacable::NotImplemented,
-      /Bad7 must match Staticable\.static, Staticable#some_method signatures/
-    )
+    end.to raise_error(Interfacable::Error, /Bad3 must implement.*Fooable#foo.*Barable#bar/m)
   end
 end
 # rubocop:enable Metrics/BlockLength
