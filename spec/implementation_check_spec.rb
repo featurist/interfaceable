@@ -83,5 +83,45 @@ RSpec.describe Interfacable::ImplementationCheck do
 
     expect(errors).to eq({})
   end
+
+  it 'checks *rest argument' do
+    interface = Module.new do
+      def self.foo(aaa, baz = 3, *args); end
+    end
+    klass = Class.new do
+      def self.foo(aaa, bar = 1); end
+    end
+
+    errors = Interfacable::ImplementationCheck.new(klass).perform([interface])
+
+    expect(errors[interface][:class_method_signature_errors]).to eq(
+      {
+        foo: {
+          expected: %w[req opt rest],
+          actual: %w[req opt]
+        }
+      }
+    )
+  end
+
+  it 'checks **opts argument' do
+    interface = Module.new do
+      def foo(aaa, baz = 3, *args, foo:); end
+    end
+    klass = Class.new do
+      def foo(aaa, bar = 1, *args, foo:, **opts); end
+    end
+
+    errors = Interfacable::ImplementationCheck.new(klass).perform([interface])
+
+    expect(errors[interface][:instance_method_signature_errors]).to eq(
+      {
+        foo: {
+          expected: ['req', 'opt', 'rest', :foo],
+          actual: ['req', 'opt', 'rest', :foo, 'keyrest']
+        }
+      }
+    )
+  end
 end
 # rubocop:enable Metrics/BlockLength

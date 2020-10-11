@@ -33,7 +33,7 @@ RSpec.describe Interfacable::ErrorFormatter do
         instance_method_signature_errors: {
           stuff: {
             expected: ['req', 'req', 'opt', :bar, :foo],
-            actual: ['req', 'opt', 'rest', 'keyrest']
+            actual: %w[req opt rest keyrest]
           }
         },
         class_method_signature_errors: {}
@@ -42,5 +42,10 @@ RSpec.describe Interfacable::ErrorFormatter do
 
     actual_error = Interfacable::ErrorFormatter.new('Stuff').format_errors(errors)
     expect(actual_error).to eq(expected_error)
+  end
+
+  it 'returns nothing when no errors' do
+    actual_error = Interfacable::ErrorFormatter.new('Stuff').format_errors({})
+    expect(actual_error).to eq('')
   end
 end

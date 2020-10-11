@@ -93,8 +93,10 @@ module Interfacable
     end
 
     def simplify_parameters(keyword_parameters, positional_parameters)
+      keyrest = keyword_parameters.pop if keyword_parameters.last && keyword_parameters.last.first == :keyrest
+
       [
-        keyword_parameters.map(&:last).sort,
+        keyword_parameters.map(&:last).sort + (keyrest ? ['keyrest'] : []),
         positional_parameters.map(&:first).reject { |p| p == :block }.map(&:to_s)
       ]
     end
