@@ -32,7 +32,7 @@ class Giffgaff
 end
 ```
 
-An attempt to run it will result in the following error:
+An attempt to _load_ this code will result in the following error:
 
     Giffgaff must implement: (Interfacable::Error)
       - Carrier#text
