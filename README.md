@@ -38,7 +38,9 @@ An attempt to _load_ this code will result in the following error:
       - Carrier#text
       - Carrier#call
 
-It will keep failing until `Giffgaff` defines those methods. Correctly. E.g.:
+It will keep failing until `Giffgaff` defines those methods.
+
+Correctly. E.g.:
 
 ```ruby
 class Giffgaff
