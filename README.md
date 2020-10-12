@@ -1,8 +1,8 @@
-# Interfacable
+# Interfacable [![Build Status](https://travis-ci.org/artemave/interfacable.svg?branch=master)](https://travis-ci.org/artemave/interfacable)
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/interfacable`. To experiment with that code, run `bin/console` for an interactive prompt.
+_An interface is a programming structure/syntax that allows the computer to enforce certain properties on an object (class)_
 
-TODO: Delete this and the text above, and describe your gem
+This gem allows you to impose interfaces on classes and automatically checks that those constraints are met.
 
 ## Installation
 
@@ -22,19 +22,41 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+In this example:
 
-## Development
+```ruby
+module Carrier
+  def call(number); end
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+  def text(number, text); end
+end
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+class Giffgaff
+  include Interfacable
 
-## Contributing
+  implements Carrier
+end
+```
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/interfacable.
+An attempt to run it will result in the following error:
 
+    Giffgaff must implement: (Interfacable::Error)
+      - Carrier#text
+      - Carrier#call
 
-## License
+It will keep failing until `Giffgaff` defines those methods. Correctly. E.g.:
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+```ruby
+class Giffgaff
+  def call(number); end
+
+  def text(number); end
+end
+```
+
+Fail because of method signature mismatch:
+
+    Giffgaff must implement correctly: (Interfacable::Error)
+      - Carrier#text:
+        - expected arguments: (req, req)
+        - actual arguments: (req)
