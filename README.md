@@ -66,8 +66,10 @@ For extra piece of mind, we can noop interface checking in production:
 ```ruby
 # config/initializers/interfacable.rb
 class Class
-  include Interfacable
-
-  def implements(*args); end if Rails.env.production?
+  if Rails.env.production?
+    def implements(*args); end
+  else
+    include Interfacable
+  end
 end
 ```
