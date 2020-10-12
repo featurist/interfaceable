@@ -27,7 +27,7 @@ RSpec.describe Interfacable do
 
     expect do
       class Bad
-        include Interfacable
+        extend Interfacable
 
         implements Fooable
       end
@@ -37,7 +37,7 @@ RSpec.describe Interfacable do
   it 'can implement multiples interfaces' do
     expect do
       class Bad2
-        include Interfacable
+        extend Interfacable
 
         implements Fooable, Barable
       end
@@ -47,7 +47,7 @@ RSpec.describe Interfacable do
   it 'can call .implements multiple times' do
     expect do
       class Bad3
-        include Interfacable
+        extend Interfacable
 
         implements Fooable
         implements Barable
