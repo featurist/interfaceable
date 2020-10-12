@@ -61,7 +61,7 @@ Will fail because of method signature mismatch:
 
 ### Rails
 
-For extra piece of mind, we can noop interface checking in production:
+For extra peace of mind, you can noop interface checking in production:
 
 ```ruby
 # config/initializers/interfacable.rb
