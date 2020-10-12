@@ -1,6 +1,6 @@
 # Interfacable [![Build Status](https://travis-ci.org/artemave/interfacable.svg?branch=master)](https://travis-ci.org/artemave/interfacable)
 
-This gem allows you to impose interfaces on classes and automatically checks that interface constraints are met.
+Impose interfaces on classes and let this gem automatically check that the interface constraints are met.
 
 ## Installation
 
