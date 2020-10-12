@@ -1,8 +1,6 @@
 # Interfacable [![Build Status](https://travis-ci.org/artemave/interfacable.svg?branch=master)](https://travis-ci.org/artemave/interfacable)
 
-_An interface is a programming structure/syntax that allows the computer to enforce certain properties on an object (class)_
-
-This gem allows you to impose interfaces on classes and automatically checks that those constraints are met.
+This gem allows you to impose interfaces on classes and automatically checks that interface constraints are met.
 
 ## Installation
 
