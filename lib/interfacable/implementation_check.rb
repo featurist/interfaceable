@@ -73,6 +73,7 @@ module Interfacable
       methods - Object.methods
     end
 
+    # rubocop:disable Metrics/MethodLength
     def check_method_signature(expected_parameters, actual_parameters)
       expected_keyword_parameters, expected_positional_parameters = simplify_parameters(
         *split_parameters_by_type(expected_parameters)
@@ -91,14 +92,21 @@ module Interfacable
         actual_keyword_parameters: actual_keyword_parameters
       }
     end
+    # rubocop:enable Metrics/MethodLength
 
     def simplify_parameters(keyword_parameters, positional_parameters)
-      keyrest = keyword_parameters.pop if keyword_parameters.last && keyword_parameters.last.first == :keyrest
+      keyrest = pop_keyrest(keyword_parameters)
 
       [
         keyword_parameters.map(&:last).sort + (keyrest ? ['keyrest'] : []),
         positional_parameters.map(&:first).reject { |p| p == :block }.map(&:to_s)
       ]
+    end
+
+    def pop_keyrest(keyword_parameters)
+      return unless keyword_parameters.last && keyword_parameters.last.first == :keyrest
+
+      keyword_parameters.pop
     end
 
     def split_parameters_by_type(parameters)

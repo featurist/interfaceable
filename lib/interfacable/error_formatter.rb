@@ -10,35 +10,38 @@ module Interfacable
     def format_errors(errors)
       error_lines = []
 
-      if (missing_method_errors = formatted_missing_methods_errors(errors)).any?
+      if (missing_method_errors = all_missing_methods_errors(errors)).any?
         error_lines << "#{@class_name} must implement:"
-        missing_method_errors.each do |error|
-          error_lines << "  - #{error}"
-        end
+        error_lines << missing_method_errors.map { |error| "  - #{error}" }
       end
 
-      if (signature_errors = formatted_signature_errors(errors)).any?
+      if (signature_errors = all_signature_errors(errors)).any?
         error_lines << "#{@class_name} must implement correctly:"
-        signature_errors.each do |(meth, check)|
-          error_lines << "  - #{meth}:"
-          error_lines << "    - expected arguments: (#{check[:expected].map(&method(:format_arg)).join(', ')})"
-          error_lines << "    - actual arguments: (#{check[:actual].map(&method(:format_arg)).join(', ')})"
-        end
+        error_lines << signature_errors.map(&method(:format_signature_error))
       end
 
-      error_lines.join("\n")
+      error_lines.flatten.join("\n")
     end
 
     private
 
-    def formatted_missing_methods_errors(errors)
+    def format_signature_error(args)
+      meth, check = args
+      [
+        "  - #{meth}:",
+        "    - expected arguments: (#{check[:expected].map(&method(:format_arg)).join(', ')})",
+        "    - actual arguments: (#{check[:actual].map(&method(:format_arg)).join(', ')})"
+      ]
+    end
+
+    def all_missing_methods_errors(errors)
       errors.map do |interface, methods|
         methods[:missing_class_methods].map { |meth| "#{interface}.#{meth}" } +
           methods[:missing_instance_methods].map { |meth| "#{interface}##{meth}" }
       end.flatten
     end
 
-    def formatted_signature_errors(errors)
+    def all_signature_errors(errors)
       errors.map do |interface, methods|
         methods[:class_method_signature_errors].map { |meth, check| ["#{interface}.#{meth}", check] } +
           methods[:instance_method_signature_errors].map { |meth, check| ["#{interface}##{meth}", check] }
@@ -46,18 +49,12 @@ module Interfacable
     end
 
     def format_arg(arg)
-      case arg
-      when 'req'
-        'req'
-      when 'opt'
-        'opt='
-      when 'rest'
-        '*rest'
-      when 'keyrest'
-        '**keyrest'
-      else
-        "#{arg}:"
-      end
+      {
+        'req' => 'req',
+        'opt' => 'opt=',
+        'rest' => '*rest',
+        'keyrest' => '**keyrest'
+      }.fetch(arg, "#{arg}:")
     end
   end
 end

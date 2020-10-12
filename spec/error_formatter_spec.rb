@@ -2,6 +2,7 @@
 
 require_relative '../lib/interfacable/error_formatter'
 
+# rubocop:disable Metrics/BlockLength
 RSpec.describe Interfacable::ErrorFormatter do
   it 'checks instance methods' do
     expected_error = <<~ERROR.chomp
@@ -49,3 +50,4 @@ RSpec.describe Interfacable::ErrorFormatter do
     expect(actual_error).to eq('')
   end
 end
+# rubocop:enable Metrics/BlockLength
