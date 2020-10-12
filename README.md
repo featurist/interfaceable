@@ -50,7 +50,7 @@ class Giffgaff
 end
 ```
 
-Fail because of method signature mismatch:
+Will fail because of method signature mismatch:
 
     Giffgaff must implement correctly: (Interfacable::Error)
       - Carrier#text:
