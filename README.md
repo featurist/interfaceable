@@ -19,6 +19,10 @@ And then execute:
 In this example:
 
 ```ruby
+class Class
+  include Interfacable
+end
+
 module Carrier
   def call(number); end
 
@@ -26,8 +30,6 @@ module Carrier
 end
 
 class Giffgaff
-  include Interfacable
-
   implements Carrier
 end
 ```
@@ -56,3 +58,16 @@ Will fail because of method signature mismatch:
       - Carrier#text:
         - expected arguments: (req, req)
         - actual arguments: (req)
+
+### Rails
+
+For extra piece of mind, we can noop interface checking in production:
+
+```ruby
+# config/initializers/interfacable.rb
+class Class
+  include Interfacable
+
+  def implements(*args); end if Rails.env.production?
+end
+```
