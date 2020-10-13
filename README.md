@@ -26,7 +26,7 @@ module Carrier
 end
 
 class Giffgaff
-  include Interfacable
+  extend Interfacable
 
   implements Carrier
 end
