@@ -1,4 +1,4 @@
-# Interfacable [![Build Status](https://travis-ci.org/artemave/interfacable.svg?branch=master)](https://travis-ci.org/artemave/interfacable) [![Gem Version](https://badge.fury.io/rb/interfacable.svg)](https://badge.fury.io/rb/interfacable)
+# Interfacable [![Build Status](https://travis-ci.org/featurist/interfacable.svg?branch=master)](https://travis-ci.org/featurist/interfacable) [![Gem Version](https://badge.fury.io/rb/interfacable.svg)](https://badge.fury.io/rb/interfacable)
 
 Impose interfaces on classes and let this gem automatically check that the interface constraints are met.
 
