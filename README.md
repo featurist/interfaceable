@@ -59,7 +59,7 @@ Will fail because of method signature mismatch:
 
 ### Rails
 
-Mix in Interfacable before any of the application code is loaded. For example, in the initializer. For extra peace of mind, you can noop interface checking in production:
+Mix in `Interfacable` before any of the application code is loaded. For example, in the initializer. For extra peace of mind, you can noop interface checking in production:
 
 ```ruby
 # config/initializers/interfacable.rb
