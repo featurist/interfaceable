@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/BlockLength
-RSpec.describe Interfacable do
+RSpec.describe Interfaceable do
   it 'has a version number' do
-    expect(Interfacable::VERSION).not_to be nil
+    expect(Interfaceable::VERSION).not_to be nil
   end
 
   module Barable
@@ -17,7 +17,7 @@ RSpec.describe Interfacable do
   it 'raises if class does not implement a method' do
     expect do
       class Good
-        extend Interfacable
+        extend Interfaceable
 
         implements Fooable
 
@@ -27,32 +27,32 @@ RSpec.describe Interfacable do
 
     expect do
       class Bad
-        extend Interfacable
+        extend Interfaceable
 
         implements Fooable
       end
-    end.to raise_error(Interfacable::Error, /Bad must implement.*Fooable#foo/m)
+    end.to raise_error(Interfaceable::Error, /Bad must implement.*Fooable#foo/m)
   end
 
   it 'can implement multiples interfaces' do
     expect do
       class Bad2
-        extend Interfacable
+        extend Interfaceable
 
         implements Fooable, Barable
       end
-    end.to raise_error(Interfacable::Error, /Bad2 must implement.*Fooable#foo.*Barable#bar/m)
+    end.to raise_error(Interfaceable::Error, /Bad2 must implement.*Fooable#foo.*Barable#bar/m)
   end
 
   it 'can call .implements multiple times' do
     expect do
       class Bad3
-        extend Interfacable
+        extend Interfaceable
 
         implements Fooable
         implements Barable
       end
-    end.to raise_error(Interfacable::Error, /Bad3 must implement.*Fooable#foo.*Barable#bar/m)
+    end.to raise_error(Interfaceable::Error, /Bad3 must implement.*Fooable#foo.*Barable#bar/m)
   end
 end
 # rubocop:enable Metrics/BlockLength

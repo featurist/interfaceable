@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Interfacable
+module Interfaceable
   # Checks if class implements interfaces correctly
   class ImplementationCheck
     def initialize(klass)

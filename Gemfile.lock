@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    interfacable (0.1.0)
+    interfaceable (0.1.1)
 
 GEM
   remote: https://rubygems.org/
@@ -53,7 +53,7 @@ PLATFORMS
 
 DEPENDENCIES
   awesome_print
-  interfacable!
+  interfaceable!
   rake
   rspec
   rubocop

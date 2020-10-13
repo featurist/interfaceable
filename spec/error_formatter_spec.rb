@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative '../lib/interfacable/error_formatter'
+require_relative '../lib/interfaceable/error_formatter'
 
 # rubocop:disable Metrics/BlockLength
-RSpec.describe Interfacable::ErrorFormatter do
+RSpec.describe Interfaceable::ErrorFormatter do
   it 'checks instance methods' do
     expected_error = <<~ERROR.chomp
       Stuff must implement:
@@ -41,12 +41,12 @@ RSpec.describe Interfacable::ErrorFormatter do
       }
     }
 
-    actual_error = Interfacable::ErrorFormatter.new('Stuff').format_errors(errors)
+    actual_error = Interfaceable::ErrorFormatter.new('Stuff').format_errors(errors)
     expect(actual_error).to eq(expected_error)
   end
 
   it 'returns nothing when no errors' do
-    actual_error = Interfacable::ErrorFormatter.new('Stuff').format_errors({})
+    actual_error = Interfaceable::ErrorFormatter.new('Stuff').format_errors({})
     expect(actual_error).to eq('')
   end
 end

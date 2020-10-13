@@ -1,21 +1,21 @@
 # frozen_string_literal: true
 
-require_relative 'lib/interfacable/version'
+require_relative 'lib/interfaceable/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'interfacable'
-  spec.version       = Interfacable::VERSION
+  spec.name          = 'interfaceable'
+  spec.version       = Interfaceable::VERSION
   spec.authors       = ['artemave']
   spec.email         = ['artemave@gmail.com']
 
   spec.summary       = 'Strict interfaces in Ruby'
   # spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = 'https://github.com/featurist/interfacable'
+  spec.homepage      = 'https://github.com/featurist/interfaceable'
   spec.license       = 'MIT'
   spec.required_ruby_version = Gem::Requirement.new('>= 2.3.0')
 
   spec.metadata['homepage_uri'] = spec.homepage
-  spec.metadata['source_code_uri'] = 'https://github.com/artemave/interfacable.git'
+  spec.metadata['source_code_uri'] = 'https://github.com/artemave/interfaceable.git'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.

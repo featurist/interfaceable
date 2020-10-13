@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative 'interfacable/implementation_check'
-require_relative 'interfacable/error_formatter'
+require_relative 'interfaceable/implementation_check'
+require_relative 'interfaceable/error_formatter'
 
 # Ruby interfaces yeah
-module Interfacable
+module Interfaceable
   # Subclassing exceptions because other errors don't raise from within `TracePoint.trace`.
   # rubocop:disable Lint/InheritException
   class Error < Exception; end
@@ -14,7 +14,7 @@ module Interfacable
     (@interfaces ||= []).push(*interfaces)
 
     # rubocop:disable Naming/MemoizedInstanceVariableName
-    @interfacable_trace ||= TracePoint.trace(:end) do |t|
+    @interfaceable_trace ||= TracePoint.trace(:end) do |t|
       # simplecov does not see inside this block
       # :nocov:
       # rubocop:enable Naming/MemoizedInstanceVariableName

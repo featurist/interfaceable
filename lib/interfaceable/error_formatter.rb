@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Interfacable
+module Interfaceable
   # Formats errors
   class ErrorFormatter
     def initialize(class_name)

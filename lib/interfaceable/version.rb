@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-module Interfacable
+module Interfaceable
   VERSION = '0.1.1'
 end

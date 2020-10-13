@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require_relative '../lib/interfacable/implementation_check'
+require_relative '../lib/interfaceable/implementation_check'
 
 # rubocop:disable Metrics/BlockLength
-RSpec.describe Interfacable::ImplementationCheck do
+RSpec.describe Interfaceable::ImplementationCheck do
   it 'checks instance methods' do
     interface = Module.new do
       def foo; end
     end
     klass = Class.new
-    errors = Interfacable::ImplementationCheck.new(klass).perform([interface])
+    errors = Interfaceable::ImplementationCheck.new(klass).perform([interface])
 
     expect(errors[interface]).to eq(
       {
@@ -26,7 +26,7 @@ RSpec.describe Interfacable::ImplementationCheck do
       def self.foo; end
     end
     klass = Class.new
-    errors = Interfacable::ImplementationCheck.new(klass).perform([interface])
+    errors = Interfaceable::ImplementationCheck.new(klass).perform([interface])
 
     expect(errors[interface][:missing_class_methods]).to eq [:foo]
   end
@@ -39,7 +39,7 @@ RSpec.describe Interfacable::ImplementationCheck do
       def foo(aaa, baz = 3, bar:, fuga: 2); end
     end
 
-    errors = Interfacable::ImplementationCheck.new(klass).perform([interface])
+    errors = Interfaceable::ImplementationCheck.new(klass).perform([interface])
 
     expect(errors[interface][:instance_method_signature_errors]).to eq(
       {
@@ -59,7 +59,7 @@ RSpec.describe Interfacable::ImplementationCheck do
       def self.foo(aaa, bbb); end
     end
 
-    errors = Interfacable::ImplementationCheck.new(klass).perform([interface])
+    errors = Interfaceable::ImplementationCheck.new(klass).perform([interface])
 
     expect(errors[interface][:class_method_signature_errors]).to eq(
       {
@@ -79,7 +79,7 @@ RSpec.describe Interfacable::ImplementationCheck do
       def foo(aaa, bbb:); end
     end
 
-    errors = Interfacable::ImplementationCheck.new(klass).perform([interface])
+    errors = Interfaceable::ImplementationCheck.new(klass).perform([interface])
 
     expect(errors).to eq({})
   end
@@ -92,7 +92,7 @@ RSpec.describe Interfacable::ImplementationCheck do
       def self.foo(aaa, bar = 1); end
     end
 
-    errors = Interfacable::ImplementationCheck.new(klass).perform([interface])
+    errors = Interfaceable::ImplementationCheck.new(klass).perform([interface])
 
     expect(errors[interface][:class_method_signature_errors]).to eq(
       {
@@ -112,7 +112,7 @@ RSpec.describe Interfacable::ImplementationCheck do
       def foo(aaa, bar = 1, *args, foo:, **opts); end
     end
 
-    errors = Interfacable::ImplementationCheck.new(klass).perform([interface])
+    errors = Interfaceable::ImplementationCheck.new(klass).perform([interface])
 
     expect(errors[interface][:instance_method_signature_errors]).to eq(
       {
