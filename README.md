@@ -19,10 +19,6 @@ And then execute:
 In this example:
 
 ```ruby
-class Class
-  include Interfacable
-end
-
 module Carrier
   def call(number); end
 
@@ -30,6 +26,8 @@ module Carrier
 end
 
 class Giffgaff
+  include Interfacable
+
   implements Carrier
 end
 ```
@@ -42,7 +40,7 @@ An attempt to _load_ this code will result in the following error:
 
 It will keep failing until `Giffgaff` defines those methods.
 
-Correctly. E.g.:
+Correctly! E.g.:
 
 ```ruby
 class Giffgaff
