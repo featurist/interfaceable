@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = 'Strict interfaces in Ruby'
   # spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = 'https://github.com/artemave/interfacable'
+  spec.homepage      = 'https://github.com/featurist/interfacable'
   spec.license       = 'MIT'
   spec.required_ruby_version = Gem::Requirement.new('>= 2.3.0')
 
