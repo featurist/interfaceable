@@ -46,7 +46,7 @@ Correctly! E.g.:
 class Giffgaff
   def call(number); end
 
-  def text(number); end
+  def text(number, text = ''); end
 end
 ```
 
@@ -55,7 +55,7 @@ Will fail because of method signature mismatch:
     Giffgaff must implement correctly: (Interfaceable::Error)
       - Carrier#text:
         - expected arguments: (req, req)
-        - actual arguments: (req)
+        - actual arguments: (req, opt=)
 
 ### Rails
 
