@@ -13,18 +13,23 @@ module Interfaceable
   def implements(*interfaces)
     (@interfaces ||= []).push(*interfaces)
 
+    @exceptions_trace ||= TracePoint.trace(:raise) do |t|
+      @exception_raised_during_class_definition = true if self == t.self
+    end
+
     # rubocop:disable Naming/MemoizedInstanceVariableName
     @interfaceable_trace ||= TracePoint.trace(:end) do |t|
       # simplecov does not see inside this block
       # :nocov:
       # rubocop:enable Naming/MemoizedInstanceVariableName
       if self == t.self
-        unless (errors = ImplementationCheck.new(self).perform(@interfaces)).empty?
+        if !@exception_raised_during_class_definition && !(errors = ImplementationCheck.new(self).perform(@interfaces)).empty?
           error_message = ErrorFormatter.new(self).format_errors(errors)
           raise(Error, error_message)
         end
 
         t.disable
+        @exceptions_trace.disable
       end
       # :nocov:
     end

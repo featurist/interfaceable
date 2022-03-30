@@ -34,6 +34,18 @@ RSpec.describe Interfaceable do
     end.to raise_error(Interfaceable::Error, /Bad must implement.*Fooable#foo/m)
   end
 
+  it 'does not catch errors during class definition' do
+    expect do
+      class Bad
+        extend Interfaceable
+
+        implements Fooable
+
+        this_is_not_a_method
+      end
+    end.to raise_error(NameError)
+  end
+
   it 'can implement multiples interfaces' do
     expect do
       class Bad2

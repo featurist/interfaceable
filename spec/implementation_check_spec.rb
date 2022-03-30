@@ -122,6 +122,13 @@ RSpec.describe Interfaceable::ImplementationCheck do
         }
       }
     )
+
+    interface = Module.new do
+      def foo(aaa, baz = 3, *args, foo:, **options); end
+    end
+
+    errors = Interfaceable::ImplementationCheck.new(klass).perform([interface])
+    expect(errors).to be_empty
   end
 end
 # rubocop:enable Metrics/BlockLength
