@@ -1,4 +1,4 @@
-# Interfaceable [![Build Status](https://travis-ci.org/featurist/interfaceable.svg?branch=master)](https://travis-ci.org/featurist/interfaceable) [![Gem Version](https://badge.fury.io/rb/interfaceable.svg)](https://badge.fury.io/rb/interfaceable)
+# Interfaceable
 
 Impose interfaces on classes and let this gem automatically check that the interface constraints are met.
 
