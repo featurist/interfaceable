@@ -49,6 +49,29 @@ RSpec.describe Interfaceable::ImplementationCheck do
         }
       }
     )
+
+    interface = Module.new do
+      def foo(aaa, bbb); end
+    end
+    klass = Class.new do
+      def foo(aaa, baz); end
+    end
+
+    errors = Interfaceable::ImplementationCheck.new(klass).perform([interface])
+
+    expect(errors).to be_empty
+
+    interface = Module.new do
+      def foo(aaa, bbb); end
+    end
+    klass = Class.new do
+      def foo(aaa, baz, bar = 5, err = nil); end
+    end
+
+    errors = Interfaceable::ImplementationCheck.new(klass).perform([interface])
+
+    # allow the class to define additional optional arguments
+    expect(errors).to be_empty
   end
 
   it 'checks class method signature' do
@@ -102,6 +125,26 @@ RSpec.describe Interfaceable::ImplementationCheck do
         }
       }
     )
+
+    klass = Class.new do
+      def self.foo(aaa, bar = 1, *args); end
+    end
+
+    errors = Interfaceable::ImplementationCheck.new(klass).perform([interface])
+
+    expect(errors).to be_empty
+
+    interface = Module.new do
+      def self.foo(aaa, baz = 3); end
+    end
+    klass = Class.new do
+      def self.foo(aaa, bar = 1, *args); end
+    end
+
+    errors = Interfaceable::ImplementationCheck.new(klass).perform([interface])
+
+    # allow class to define an additional rest argument
+    expect(errors).to be_empty
   end
 
   it 'checks **opts argument' do
@@ -114,14 +157,8 @@ RSpec.describe Interfaceable::ImplementationCheck do
 
     errors = Interfaceable::ImplementationCheck.new(klass).perform([interface])
 
-    expect(errors[interface][:instance_method_signature_errors]).to eq(
-      {
-        foo: {
-          expected: ['req', 'opt', 'rest', :foo],
-          actual: ['req', 'opt', 'rest', :foo, 'keyrest']
-        }
-      }
-    )
+    # allow the class to have additional rest parameters
+    expect(errors).to be_empty
 
     interface = Module.new do
       def foo(aaa, baz = 3, *args, foo:, **options); end
@@ -129,6 +166,20 @@ RSpec.describe Interfaceable::ImplementationCheck do
 
     errors = Interfaceable::ImplementationCheck.new(klass).perform([interface])
     expect(errors).to be_empty
+
+    klass = Class.new do
+      def foo(aaa, bar = 1, *args, foo:); end
+    end
+    errors = Interfaceable::ImplementationCheck.new(klass).perform([interface])
+
+    expect(errors[interface][:instance_method_signature_errors]).to eq(
+      {
+        foo: {
+          expected: ['req', 'opt', 'rest', :foo, 'keyrest'],
+          actual: ['req', 'opt', 'rest', :foo]
+        }
+      }
+    )
   end
 end
 # rubocop:enable Metrics/BlockLength
