@@ -1,4 +1,4 @@
-# Interfaceable
+# Interfaceable [![Ruby](https://github.com/featurist/interfaceable/actions/workflows/ruby.yml/badge.svg)](https://github.com/featurist/interfaceable/actions/workflows/ruby.yml)
 
 Impose interfaces on classes and let this gem automatically check that the interface constraints are met.
 
