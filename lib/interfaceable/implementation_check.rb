@@ -73,6 +73,16 @@ module Interfaceable
       methods - Object.methods
     end
 
+    OPTIONAL_PARAMETERS = %w[opt rest keyrest]
+
+    def check_if_parameters_are_compatible(expected_parameters, actual_parameters)
+      return false if actual_parameters.length < expected_parameters.length
+      return false if actual_parameters.take(expected_parameters.length) != expected_parameters
+
+      additional_parameters = actual_parameters[expected_parameters.length..]
+      additional_parameters.all? { OPTIONAL_PARAMETERS.include?(_1) }
+    end
+
     # rubocop:disable Metrics/MethodLength
     def check_method_signature(expected_parameters, actual_parameters)
       expected_keyword_parameters, expected_positional_parameters = simplify_parameters(
@@ -84,6 +94,9 @@ module Interfaceable
 
       return if expected_positional_parameters == actual_positional_parameters &&
                 expected_keyword_parameters == actual_keyword_parameters
+
+      return if check_if_parameters_are_compatible(expected_positional_parameters, actual_positional_parameters) &&
+                check_if_parameters_are_compatible(expected_keyword_parameters, actual_keyword_parameters)
 
       {
         expected_positional_parameters: expected_positional_parameters,
