@@ -57,6 +57,24 @@ Will fail because of method signature mismatch:
         - expected arguments: (req, req)
         - actual arguments: (req, opt=)
 
+Classes may define additional optional or rest arguments.
+
+```ruby
+module Carrier
+  def call(number); end
+
+  def text(number, text); end
+end
+
+class Giffgaff
+  def call(number, *opts); end
+
+  def text(number, text, opt1 = nil, opt2 = nil); end
+end
+```
+
+This will not generate any errors since `Giffgaff` implements the required methods with correct arguments only adding new optional ones.
+
 ### Rails
 
 Mix in `Interfaceable` before any of the application code is loaded. For example, in the initializer. For extra peace of mind, you can noop interface checking in production:

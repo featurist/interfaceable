@@ -49,18 +49,9 @@ RSpec.describe Interfaceable::ImplementationCheck do
         }
       }
     )
+  end
 
-    interface = Module.new do
-      def foo(aaa, bbb); end
-    end
-    klass = Class.new do
-      def foo(aaa, baz); end
-    end
-
-    errors = Interfaceable::ImplementationCheck.new(klass).perform([interface])
-
-    expect(errors).to be_empty
-
+  it 'accepts additional optional arguments' do
     interface = Module.new do
       def foo(aaa, bbb); end
     end
@@ -125,15 +116,9 @@ RSpec.describe Interfaceable::ImplementationCheck do
         }
       }
     )
+  end
 
-    klass = Class.new do
-      def self.foo(aaa, bar = 1, *args); end
-    end
-
-    errors = Interfaceable::ImplementationCheck.new(klass).perform([interface])
-
-    expect(errors).to be_empty
-
+  it 'accepts additional *rest argument' do
     interface = Module.new do
       def self.foo(aaa, baz = 3); end
     end
@@ -149,24 +134,8 @@ RSpec.describe Interfaceable::ImplementationCheck do
 
   it 'checks **opts argument' do
     interface = Module.new do
-      def foo(aaa, baz = 3, *args, foo:); end
-    end
-    klass = Class.new do
-      def foo(aaa, bar = 1, *args, foo:, **opts); end
-    end
-
-    errors = Interfaceable::ImplementationCheck.new(klass).perform([interface])
-
-    # allow the class to have additional rest parameters
-    expect(errors).to be_empty
-
-    interface = Module.new do
       def foo(aaa, baz = 3, *args, foo:, **options); end
     end
-
-    errors = Interfaceable::ImplementationCheck.new(klass).perform([interface])
-    expect(errors).to be_empty
-
     klass = Class.new do
       def foo(aaa, bar = 1, *args, foo:); end
     end
@@ -180,6 +149,20 @@ RSpec.describe Interfaceable::ImplementationCheck do
         }
       }
     )
+  end
+
+  it 'accepts additional **opts argument' do
+    interface = Module.new do
+      def foo(aaa, baz = 3, *args, foo:); end
+    end
+    klass = Class.new do
+      def foo(aaa, bar = 1, *args, foo:, **opts); end
+    end
+
+    errors = Interfaceable::ImplementationCheck.new(klass).perform([interface])
+
+    # allow the class to have additional rest parameters
+    expect(errors).to be_empty
   end
 end
 # rubocop:enable Metrics/BlockLength
